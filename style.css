@@ -1,0 +1,154 @@
+/* Reset dasar biar rapi di semua browser */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background-color: #f0f2f5;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 40px 20px;
+}
+
+.container {
+    background: white;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 450px; /* Kita lebarin dikit biar gak sesak */
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #333;
+}
+
+/* Bagian Input yang kita rapihin */
+.input-group {
+    display: flex;
+    flex-wrap: wrap; /* Biar kalau layar kecil dia turun ke bawah otomatis */
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+#taskInput {
+    flex: 2; /* Nama tugas dapet porsi lebih lebar */
+    min-width: 120px;
+}
+
+.timer-config {
+    display: flex;
+    flex: 2;
+    gap: 5px;
+    min-width: 120px;
+}
+
+#timerInput {
+    width: 100%;
+}
+
+input, select {
+    padding: 10px 12px;
+    border: 2px solid #edeff2;
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+input:focus, select:focus {
+    border-color: #28a745;
+}
+
+.btn-add {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    width: 100%; /* Tombol tambah di bawah kalau layar sempit */
+}
+
+.btn-add:hover {
+    background-color: #218838;
+}
+
+/* List Tugas */
+ul {
+    list-style: none;
+}
+
+li {
+    background: #fff;
+    border: 1px solid #f0f0f0;
+    margin-bottom: 12px;
+    padding: 15px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+}
+
+.task-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.task-check {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.task-text {
+    font-size: 1rem;
+    color: #444;
+}
+
+.completed {
+    text-decoration: line-through;
+    color: #a0a0a0;
+}
+
+/* Bagian Kontrol (Timer & Hapus) */
+.task-control {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.timer-display {
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: bold;
+    color: #e74c3c;
+    background: #fff5f5;
+    padding: 4px 8px;
+    border-radius: 5px;
+    font-size: 0.9rem;
+}
+
+.btn-delete {
+    background: #fff0f0;
+    color: #ff4757;
+    border: 1px solid #ffcccc;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: 0.2s;
+}
+
+.btn-delete:hover {
+    background: #ff4757;
+    color: white;
+}

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Checklist Pro Timer</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <h2>🚀 Task Master with Timer</h2>
+        
+        <div class="input-group">
+            <input type="text" id="taskInput" placeholder="Nama tugas...">
+            <div class="timer-config">
+                <input type="number" id="timerInput" placeholder="Durasi" min="1">
+                <select id="unitInput">
+                    <option value="1">Detik</option>
+                    <option value="60">Menit</option>
+                </select>
+            </div>
+            <button onclick="addTask()" class="btn-add">Tambah</button>
+        </div>
+
+        <ul id="taskList"></ul>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
