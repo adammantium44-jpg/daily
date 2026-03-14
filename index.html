@@ -1,30 +1,269 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <title>Checklist Pro Timer</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <title>AQ3D Daily Quest Gold Tracker</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  >
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
 </head>
-<body>
+<body class="bg-light">
+<div class="container my-4">
 
-    <div class="container">
-        <h2>🚀 Task Master with Timer</h2>
-        
-        <div class="input-group">
-            <input type="text" id="taskInput" placeholder="Nama tugas...">
-            <div class="timer-config">
-                <input type="number" id="timerInput" placeholder="Durasi" min="1">
-                <select id="unitInput">
-                    <option value="1">Detik</option>
-                    <option value="60">Menit</option>
-                </select>
-            </div>
-            <button onclick="addTask()" class="btn-add">Tambah</button>
-        </div>
-
-        <ul id="taskList"></ul>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <h1 class="mb-1 text-primary">AQ3D Daily Quest Gold Tracker</h1>
+      <p class="text-muted mb-0">
+        Checklist daily quest dan lihat total gold. Tambah quest baru lewat popup.
+      </p>
     </div>
+    <button
+      type="button"
+      class="btn btn-success"
+      data-bs-toggle="modal"
+      data-bs-target="#addQuestModal"
+    >
+      + Tambah Quest
+    </button>
+  </div>
 
-    <script src="script.js"></script>
+  <!-- TABEL QUEST -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+      <strong>Daftar Daily Quest</strong>
+      <button id="clearChecksBtn" class="btn btn-sm btn-outline-light">
+        Hapus Checklist
+      </button>
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-striped table-hover mb-0" id="questTable">
+          <thead class="table-secondary">
+          <tr>
+            <th style="width: 40px;">Done</th>
+            <th>Quest</th>
+            <th>NPC</th>
+            <th>Lokasi</th>
+            <th class="text-end">Reward Gold</th>
+          </tr>
+          </thead>
+          <tbody id="questTableBody">
+          </tbody>
+          <tfoot>
+          <tr class="table-primary">
+            <th colspan="4" class="text-end">Total Gold (quest ter-centang):</th>
+            <th class="text-end">
+              <span id="totalGold">0</span>
+            </th>
+          </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- MODAL TAMBAH QUEST -->
+<div class="modal fade" id="addQuestModal" tabindex="-1" aria-labelledby="addQuestModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form id="addQuestForm">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addQuestModalLabel">Tambah Quest Baru</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="questName" class="form-label">Nama Quest</label>
+            <input type="text" class="form-control" id="questName" required>
+          </div>
+          <div class="mb-3">
+            <label for="questNPC" class="form-label">NPC</label>
+            <input type="text" class="form-control" id="questNPC" required>
+          </div>
+          <div class="mb-3">
+            <label for="questLocation" class="form-label">Lokasi</label>
+            <input type="text" class="form-control" id="questLocation" required>
+          </div>
+          <div class="mb-3">
+            <label for="questReward" class="form-label">Reward Gold</label>
+            <input type="number" min="0" class="form-control" id="questReward" required>
+          </div>
+          <div class="mb-3">
+            <label for="questUrl" class="form-label">URL (opsional)</label>
+            <input type="url" class="form-control" id="questUrl" placeholder="http://...">
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="questSeasonal">
+            <label class="form-check-label" for="questSeasonal">
+              Seasonal quest
+            </label>
+          </div>
+          <small class="text-muted d-block mt-1">
+            Seasonal bisa kamu disable nanti (readonly) tanpa harus hapus dari daftar.
+          </small>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+          <button type="submit" class="btn btn-primary">Simpan Quest</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Data default; tambahin "seasonal: true" kalau memang quest musiman
+  const defaultQuests = [
+    { name: 'Exotic Creature Capture', npc: 'Aria', location: 'Battleon Pet Shop (Battleon)', reward: 2800, checked: false, url: 'http://aq-3d.wikidot.com/aria-s-daily-quests#1' },
+    { name: 'Just Keep Cleaning', npc: 'Aria', location: 'Battleon Pet Shop (Battleon)', reward: 7000, checked: false, url: 'http://aq-3d.wikidot.com/aria-s-daily-quests#2' },
+    { name: 'Sturdy Material', npc: 'Brigitte', location: 'Battleon Trade District', reward: 14000, checked: false, url: 'http://aq-3d.wikidot.com/brigitte-s-daily-quests' },
+    { name: 'Solid Material', npc: 'Brigitte', location: 'Battleon Trade District', reward: 14000, checked: false, url: 'http://aq-3d.wikidot.com/brigitte-s-daily-quests' },
+    { name: 'Sand Witch of the Day', npc: 'Fahad', location: 'Sandsea Desert', reward: 11340, checked: false, url: 'http://aq-3d.wikidot.com/fahad-s-daily-quest' },
+    { name: 'Tentacled Terror', npc: 'Marina Gomez', location: 'Lolosia', reward: 9800, checked: false, url: 'http://aq-3d.wikidot.com/marina-gomez-s-daily-quest' },
+    { name: 'Royal Seashell Daily', npc: 'Kenai (Atlantean)', location: 'Atlantis', reward: 9450, checked: false, url: 'http://aq-3d.wikidot.com/kenai-s-daily-quest' },
+    { name: "A Soldier's Duty", npc: 'Aquella', location: 'Atlantis', reward: 12600, checked: false, url: 'http://aq-3d.wikidot.com/aquella-s-daily-quest' },
+    { name: "Royal Atlantean Guard's Daily Quest", npc: 'Royal Atlantean Guard', location: 'Atlantis Palace', reward: 10080, checked: false, url: 'http://aq-3d.wikidot.com/royal-atlantean-guard-s-daily-quest' },
+    { name: 'Daily Thropy Hunt', npc: 'Senna', location: 'Volcano Camp', reward: 4200, checked: false, url: 'http://aq-3d.wikidot.com/senna-s-daily-quests' },
+    { name: 'Advanced Thropy Hunt', npc: 'Senna', location: 'Volcano Camp', reward: 4200, checked: false, url: 'http://aq-3d.wikidot.com/senna-s-daily-quests' },
+    { name: 'A Magical Skein', npc: 'Loremaster Hazel', location: 'Loremaster Lodge', reward: 7000, checked: false, url: 'http://aq-3d.wikidot.com/loremaster-hazel-s-daily-quests' },
+    { name: 'Tangled Skein', npc: 'Loremaster Hazel', location: 'Loremaster Lodge', reward: 7000, checked: false, url: 'http://aq-3d.wikidot.com/loremaster-hazel-s-daily-quests' },
+    { name: 'Powering a Cosmic Armaments', npc: 'Loremaster Hazel', location: 'Loremaster Lodge', reward: 7000, checked: false, url: 'http://aq-3d.wikidot.com/loremaster-hazel-s-daily-quests' },
+    { name: 'A Gem Hoard', npc: 'Battleon Quest Board', location: 'Battleon', reward: 14000, checked: false, url: 'http://aq-3d.wikidot.com/quest-board-s-daily-quest' },
+    { name: 'More of THE Hat', npc: 'Hatrick - The Man of Hats', location: 'Hat Hatch', reward: 7000, checked: false, url: 'http://aq-3d.wikidot.com/hatrick-the-man-of-hats-daily-quests' },
+    { name: 'Work Shift: Full Shift', npc: 'Wandy', location: 'Burger Hero', reward: 17000, checked: false, url: 'http://aq-3d.wikidot.com/wandy-s-daily-quests' },
+    { name: 'Killing An Alpha', npc: 'Luigi', location: 'Goo Exterminator', reward: 7000, checked: false, url: 'http://aq-3d.wikidot.com/luigi-s-daily-quest' },
+    { name: 'Cleaning Up', npc: 'Gunpowder Mary', location: 'Lolosia', reward: 4900, checked: false, url: 'http://aq-3d.wikidot.com/gunpowder-mary-s-daily-quests' }
+    // contoh seasonal:
+    // { name: 'Frostval Daily', npc: 'Random NPC', location: 'Frostval', reward: 10000, checked: false, url: 'http://...', seasonal: true, seasonalActive: false }
+  ];
+
+  const STORAGE_KEY = 'aq3d_daily_quests_v1';
+
+  const tableBody = document.getElementById('questTableBody');
+  const totalGoldEl = document.getElementById('totalGold');
+  const clearChecksBtn = document.getElementById('clearChecksBtn');
+
+  function formatGold(x) {
+    return Number(x).toLocaleString('en-US');
+  }
+
+  function loadQuestsFromStorage() {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return structuredClone(defaultQuests);
+    try {
+      const data = JSON.parse(raw);
+      if (!Array.isArray(data)) throw new Error('Invalid data');
+      return data;
+    } catch (e) {
+      console.error('Gagal parse localStorage, pakai default.', e);
+      return structuredClone(defaultQuests);
+    }
+  }
+
+  function saveQuestsToStorage(quests) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(quests));
+  }
+
+  function recalcTotal(quests) {
+    const total = quests
+      .filter(q => q.checked)
+      .reduce((sum, q) => sum + Number(q.reward || 0), 0);
+    totalGoldEl.textContent = formatGold(total);
+  }
+
+  function renderTable(quests) {
+    tableBody.innerHTML = '';
+    quests.forEach((quest, index) => {
+      const tr = document.createElement('tr');
+      tr.setAttribute('data-index', index);
+
+      const nameCellHtml = quest.url
+        ? `<a href="${quest.url}" target="_blank" rel="noopener noreferrer">${quest.name}</a>`
+        : quest.name;
+
+      // seasonal readonly: kalau seasonal === true dan seasonalActive === false, checkbox disabled
+      const isSeasonalReadonly = quest.seasonal && quest.seasonalActive === false;
+
+      tr.innerHTML = `
+        <td class="text-center">
+          <input
+            type="checkbox"
+            class="form-check-input quest-check"
+            ${quest.checked ? 'checked' : ''}
+            ${isSeasonalReadonly ? 'disabled' : ''}
+          >
+        </td>
+        <td>${nameCellHtml}${quest.seasonal ? ' <span class="badge bg-warning text-dark ms-1">Seasonal</span>' : ''}</td>
+        <td>${quest.npc}</td>
+        <td>${quest.location}</td>
+        <td class="text-end">${formatGold(quest.reward)}</td>
+      `;
+
+      const checkbox = tr.querySelector('.quest-check');
+
+      if (!isSeasonalReadonly) {
+        checkbox.addEventListener('change', () => {
+          quest.checked = checkbox.checked;
+          saveQuestsToStorage(quests);
+          recalcTotal(quests);
+        });
+      }
+
+      tableBody.appendChild(tr);
+    });
+
+    recalcTotal(quests);
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    let quests = loadQuestsFromStorage();
+    renderTable(quests);
+
+    const addQuestForm = document.getElementById('addQuestForm');
+    addQuestForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const name = document.getElementById('questName').value.trim();
+      const npc = document.getElementById('questNPC').value.trim();
+      const location = document.getElementById('questLocation').value.trim();
+      const reward = Number(document.getElementById('questReward').value);
+      const url = document.getElementById('questUrl').value.trim();
+      const seasonal = document.getElementById('questSeasonal').checked;
+
+      if (!name || !npc || !location || isNaN(reward) || reward < 0) {
+        alert('Cek lagi inputnya, jangan ada yang kosong.');
+        return;
+      }
+
+      const newQuest = { name, npc, location, reward, checked: false };
+      if (url) newQuest.url = url;
+      if (seasonal) {
+        newQuest.seasonal = true;
+        newQuest.seasonalActive = true; // default aktif, nanti bisa kamu matikan manual di data
+      }
+
+      quests.push(newQuest);
+      saveQuestsToStorage(quests);
+      renderTable(quests);
+
+      const modalEl = document.getElementById('addQuestModal');
+      const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+      modal.hide();
+      this.reset();
+    });
+
+    // Tombol "Hapus Checklist" (uncheck semua, seasonal readonly tetap disabled)
+    clearChecksBtn.addEventListener('click', () => {
+      quests.forEach(q => { if (!q.seasonal || q.seasonalActive !== false) q.checked = false; });
+      saveQuestsToStorage(quests);
+      renderTable(quests);
+    });
+  });
+</script>
+
 </body>
 </html>
