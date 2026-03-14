@@ -17,7 +17,7 @@
     <div>
       <h1 class="mb-1 text-primary">AQ3D Daily Quest Gold Tracker</h1>
       <p class="text-muted mb-0">
-        Checklist daily quest dan lihat total gold. Tambah quest baru lewat <a href="https://github.com/adammantium44-jpg/daily/blob/main/index.html" target="_blank" rel="noopener noreferrer">popup.</a>
+        Checklist daily quest dan lihat total gold. Tambah quest baru lewat popup.
       </p>
     </div>
     <button
@@ -34,9 +34,18 @@
   <div class="card shadow-sm mb-4">
     <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
       <strong>Daftar Daily Quest</strong>
-      <button id="clearChecksBtn" class="btn btn-sm btn-outline-light">
-        Hapus Checklist
-      </button>
+      <div class="d-flex gap-2">
+    <button
+      type="button"
+      class="btn btn-sm btn-info"
+      onclick="window.open('https://github.com/adammantium44-jpg/daily/blob/main/index.html', '_blank', 'noopener');"
+    >
+      Edit Code
+    </button>
+    <button id="clearChecksBtn" class="btn btn-sm btn-outline-light">
+      Hapus Checklist
+    </button>
+  </div>
     </div>
     <div class="card-body p-0">
       <div class="table-responsive">
